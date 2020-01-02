@@ -11,6 +11,30 @@ import Foundation
 class BaseGrammar: NSObject {
 
     class func main() -> Void {
+
+        /*错误处理
+        do {
+            try throwing expression
+        } catch pattern {
+            statements
+        }*/
+
+
+        //可选类型>>>使用可选类型（optionals）来处理值可能缺失的情况
+        //nil不能用于非可选的常量和变量。如果你的代码中有常量或者变量需要处理值缺失的情况，请把它们声明成对应的可选类型。
+        //Swift 中，nil 不是指针——它是一个确定的值，用来表示值缺失。任何类型的可选状态都可以被设置为 nil，不只是对象类型。
+        var sRcode:Int? = 404
+        sRcode = nil
+
+        ///如果一个变量之后可能变成nil的话请不要使用隐式解析可选类型
+        ///let aab = sRcode!
+
+        if sRcode == nil {
+            sRcode = Int(500)
+        }
+
+
+
         //元组（tuples）
         //元组在临时组织值的时候很有用，但是并不适合创建复杂的数据结构。
         //如果你的数据结构并不是临时使用，请使用类或者结构体而不是元组

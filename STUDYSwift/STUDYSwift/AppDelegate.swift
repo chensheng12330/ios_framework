@@ -17,7 +17,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
 
         //2.1 基础 部分
-        BaseGrammar .main()
+        //BaseGrammar .main()
+
+        //2.2 基本运算符（Basic Operators）
+        BasicOperators.main()
 
         return true
     }
