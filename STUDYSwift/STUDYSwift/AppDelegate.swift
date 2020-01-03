@@ -20,7 +20,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //BaseGrammar .main()
 
         //2.2 基本运算符（Basic Operators）
-        BasicOperators.main()
+        //BasicOperators.main()
+
+        //2.3 字符串
+        SwStrings.main()
+        
 
         return true
     }
