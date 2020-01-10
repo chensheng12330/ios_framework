@@ -17,8 +17,44 @@ class Collection: NSObject {
          */
         //创建一个空字典
         var namesOfIntegers = [Int: String]()
+        namesOfIntegers[10] = "字典"
+        namesOfIntegers[11] = "字典2"
+        DBLog.info.cat(namesOfIntegers)
+
+        var dVal = namesOfIntegers[0]
+        if dVal == nil {
+            DBLog.cat("dVal is nil")
+        }
+
+        dVal = namesOfIntegers[10]
+        DBLog.info.cat(namesOfIntegers)
+
+        let rBV = namesOfIntegers.removeValue(forKey: 1)
+        let rBC = namesOfIntegers.removeValue(forKey: 10)
+
+        if rBC == nil {
+            DBLog.info.cat(namesOfIntegers)
+        }
+
+        if rBV == nil {
+            DBLog.info.cat(namesOfIntegers)
+        }
+
+        namesOfIntegers = [1:"a", 2:"b", 3:"c",4:"d"]
+        for (k,v) in namesOfIntegers {
+            DBLog.info.cat("k:\(k)  v:\(v)")
+        }
+
+        for key in namesOfIntegers.keys {
+            DBLog.cat(key)
+        }
+
+        for val in namesOfIntegers.values {
+            DBLog.cat(val)
+        }
         
 
+        return
         //集合（Sets）
         /*
          集合(Set)用来存储相同类型并且没有确定顺序的值。

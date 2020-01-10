@@ -26,7 +26,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //SwStrings.main()
 
         //2.4 集合类型
-        Collection.main()
+        //Collection.main()
+
+        //2.5 控制流
+        ControlFlow.main()
 
         return true
     }
