@@ -11,6 +11,20 @@ import Foundation
 class SwStrings: NSObject {
     class func main()->() { //Void = ()
 
+        //可扩展的字形群集
+        let precomposed: Character = "\u{D55C}"
+        let decomposed: Character = "\u{1112}\u{1161}\u{11AB}"
+        DBLog.cat(precomposed)
+        DBLog.cat(decomposed)
+
+        return
+        //字符串插值 (数据字符串化)
+        let num: NSInteger = 1024
+        let fnum: Float = 1024.00
+        let str: String = "1024"
+        var apptStr :String = "nums:  \(num) , \(fnum), \(str)"
+        DBLog.cat(apptStr)
+
         let exCha : Character  = "!"
         DBLog.cat(exCha)
 
