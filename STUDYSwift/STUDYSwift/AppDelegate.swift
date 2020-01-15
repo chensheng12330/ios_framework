@@ -29,7 +29,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //Collection.main()
 
         //2.5 控制流
-        ControlFlow.main()
+        //ControlFlow.main()
+
+        //2.6 函数
+        Functions.main()
 
         return true
     }
