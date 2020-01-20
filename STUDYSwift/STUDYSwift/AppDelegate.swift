@@ -52,7 +52,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //Functions.main()
 
         //2.7 Closures
-        Closures.main()
+        //Closures.main()
+
+        //2.8 Enumerations
+        Enumerations.main()
+
+        
 
         return true
     }

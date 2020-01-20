@@ -20,6 +20,7 @@
 		D4BE7E7B23B5E5B000FD6158 /* base_grammar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BE7E7A23B5E5B000FD6158 /* base_grammar.swift */; };
 		D4CBFE9923BDD6E000BDA9BD /* BasicOperators.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CBFE9823BDD6E000BDA9BD /* BasicOperators.swift */; };
 		D4CBFE9D23BDF49B00BDA9BD /* SwStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CBFE9C23BDF49B00BDA9BD /* SwStrings.swift */; };
+		D4FB267423D3F80500A04AB1 /* Enumerations.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4FB267323D3F80500A04AB1 /* Enumerations.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		D4BE7E7A23B5E5B000FD6158 /* base_grammar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = base_grammar.swift; sourceTree = "<group>"; };
 		D4CBFE9823BDD6E000BDA9BD /* BasicOperators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicOperators.swift; sourceTree = "<group>"; };
 		D4CBFE9C23BDF49B00BDA9BD /* SwStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwStrings.swift; sourceTree = "<group>"; };
+		D4FB267323D3F80500A04AB1 /* Enumerations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enumerations.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 				D44F81FD23C822DA00B853EA /* ControlFlow.swift */,
 				D489B25C23CC1848001B7F4E /* Functions.swift */,
 				D472A11723D003C1006658C1 /* Closures.swift */,
+				D4FB267323D3F80500A04AB1 /* Enumerations.swift */,
 				D40B7241239F3A6F009B170B /* Main.storyboard */,
 				D40B7244239F3A71009B170B /* Assets.xcassets */,
 				D40B7246239F3A71009B170B /* LaunchScreen.storyboard */,
@@ -169,6 +172,7 @@
 				D472A11823D003C1006658C1 /* Closures.swift in Sources */,
 				D47FE6FF23C5896A00D8BD32 /* Collection.swift in Sources */,
 				D4BE7E7923B5AC9E00FD6158 /* DBLog.swift in Sources */,
+				D4FB267423D3F80500A04AB1 /* Enumerations.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
