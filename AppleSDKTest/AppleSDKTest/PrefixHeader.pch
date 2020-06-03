@@ -1,0 +1,29 @@
+//
+//  PrefixHeader.pch
+//  Wallet
+//
+//  Created by Sherwin.Chen on 16/1/5.
+//  Copyright © 2017年 maimaiti. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+//引入Masonry两个宏 便于写布局代码
+#define MAS_SHORTHAND
+#define MAS_SHORTHAND_GLOBALS
+
+#ifdef __OBJC__
+
+#import <UIKit/UIKit.h>
+#import "CocoaLumberjack.h"
+
+static const DDLogLevel ddLogLevel = DDLogLevelAll;
+
+
+#endif
+
+#define kScreenWidth [[UIScreen mainScreen] bounds].size.width
+#define kScreenHeight [[UIScreen mainScreen] bounds].size.height
+
+#endif /* PrefixHeader_pch */

@@ -10,6 +10,7 @@
 
 @interface FirstViewController : UIViewController
 
+- (IBAction)Action4ValueChanged:(UISegmentedControl *)sender;
 
 @end
 
