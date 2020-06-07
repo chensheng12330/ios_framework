@@ -46,7 +46,7 @@
                                                     </connections>
                                                 </segmentedControl>
                                                 <segmentedControl opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="iLE-V7-OhJ">
-                                                    <rect key="frame" x="0.0" y="80" width="375" height="31"/>
+                                                    <rect key="frame" x="0.0" y="85" width="375" height="31"/>
                                                     <color key="backgroundColor" red="1" green="0.0" blue="1" alpha="0.52506956339999999" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="30" id="M7a-qR-X58"/>
@@ -64,7 +64,7 @@
                                                     </connections>
                                                 </segmentedControl>
                                                 <segmentedControl opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="P19-cX-XAS">
-                                                    <rect key="frame" x="0.0" y="120" width="375" height="31"/>
+                                                    <rect key="frame" x="0.0" y="130" width="375" height="31"/>
                                                     <color key="backgroundColor" red="1" green="0.40784313729999999" blue="0.050980392159999999" alpha="0.50853488869999997" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="30" id="ZNK-Gs-haT"/>
@@ -82,6 +82,24 @@
                                                         <action selector="Action4ValueChanged:" destination="9pv-A4-QxB" eventType="valueChanged" id="gg0-Tr-rUp"/>
                                                     </connections>
                                                 </segmentedControl>
+                                                <segmentedControl opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Vbo-vN-KIe">
+                                                    <rect key="frame" x="0.0" y="175" width="375" height="31"/>
+                                                    <color key="backgroundColor" red="1" green="0.40784313729999999" blue="0.050980392159999999" alpha="0.50853488869999997" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="30" id="8ix-Wa-W79"/>
+                                                    </constraints>
+                                                    <segments>
+                                                        <segment title="N"/>
+                                                        <segment title="信号量"/>
+                                                        <segment title="同步壁垒"/>
+                                                        <segment title="异步壁垒"/>
+                                                        <segment title="队列管理"/>
+                                                    </segments>
+                                                    <color key="selectedSegmentTintColor" systemColor="systemPinkColor" red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <connections>
+                                                        <action selector="Action4ValueChanged:" destination="9pv-A4-QxB" eventType="valueChanged" id="w7w-Ii-ZW6"/>
+                                                    </connections>
+                                                </segmentedControl>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="GCD基础测试" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Smu-SP-zDt">
                                                     <rect key="frame" x="10" y="10" width="106" height="20"/>
                                                     <constraints>
@@ -91,18 +109,42 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <segmentedControl opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Jxn-Ct-qO6">
+                                                    <rect key="frame" x="0.0" y="220" width="375" height="31"/>
+                                                    <color key="backgroundColor" red="1" green="0.40784313729999999" blue="0.050980392159999999" alpha="0.50853488869999997" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="30" id="CmP-i3-4sb"/>
+                                                    </constraints>
+                                                    <segments>
+                                                        <segment title="调度块"/>
+                                                        <segment title="同步执行"/>
+                                                        <segment title="同步超时"/>
+                                                        <segment title="异步执行"/>
+                                                        <segment title="取消块"/>
+                                                    </segments>
+                                                    <color key="selectedSegmentTintColor" systemColor="systemPinkColor" red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <connections>
+                                                        <action selector="Action4ValueChanged:" destination="9pv-A4-QxB" eventType="valueChanged" id="2AN-Mx-6Xv"/>
+                                                    </connections>
+                                                </segmentedControl>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="Smu-SP-zDt" firstAttribute="top" secondItem="CCf-wD-uIn" secondAttribute="top" constant="10" id="2Mb-jB-fma"/>
                                                 <constraint firstAttribute="trailing" secondItem="P19-cX-XAS" secondAttribute="trailing" id="3w7-Cy-nhT"/>
-                                                <constraint firstItem="iLE-V7-OhJ" firstAttribute="top" secondItem="2f0-FL-Ceu" secondAttribute="bottom" constant="10" id="CSE-ez-rJS"/>
+                                                <constraint firstItem="Jxn-Ct-qO6" firstAttribute="top" secondItem="Vbo-vN-KIe" secondAttribute="bottom" constant="15" id="8Wk-SL-Vyl"/>
+                                                <constraint firstItem="iLE-V7-OhJ" firstAttribute="top" secondItem="2f0-FL-Ceu" secondAttribute="bottom" constant="15" id="CSE-ez-rJS"/>
                                                 <constraint firstAttribute="trailing" secondItem="iLE-V7-OhJ" secondAttribute="trailing" id="J0h-vH-BTP"/>
-                                                <constraint firstItem="P19-cX-XAS" firstAttribute="top" secondItem="iLE-V7-OhJ" secondAttribute="bottom" constant="10" id="MeC-3o-d0D"/>
+                                                <constraint firstItem="P19-cX-XAS" firstAttribute="top" secondItem="iLE-V7-OhJ" secondAttribute="bottom" constant="15" id="MeC-3o-d0D"/>
                                                 <constraint firstItem="P19-cX-XAS" firstAttribute="leading" secondItem="CCf-wD-uIn" secondAttribute="leading" id="UAV-d4-79m"/>
+                                                <constraint firstAttribute="trailing" secondItem="Vbo-vN-KIe" secondAttribute="trailing" id="Ukh-yh-Hnk"/>
                                                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Smu-SP-zDt" secondAttribute="trailing" constant="20" symbolic="YES" id="ap2-hN-jj7"/>
+                                                <constraint firstItem="Vbo-vN-KIe" firstAttribute="top" secondItem="P19-cX-XAS" secondAttribute="bottom" constant="15" id="bEm-zB-FaL"/>
                                                 <constraint firstAttribute="trailing" secondItem="2f0-FL-Ceu" secondAttribute="trailing" id="cx1-Sc-e9l"/>
                                                 <constraint firstItem="Smu-SP-zDt" firstAttribute="leading" secondItem="CCf-wD-uIn" secondAttribute="leading" constant="10" id="dLU-jl-vit"/>
+                                                <constraint firstAttribute="trailing" secondItem="Jxn-Ct-qO6" secondAttribute="trailing" id="hSO-db-emw"/>
                                                 <constraint firstItem="2f0-FL-Ceu" firstAttribute="leading" secondItem="CCf-wD-uIn" secondAttribute="leading" id="jU0-aZ-LYx"/>
+                                                <constraint firstItem="Vbo-vN-KIe" firstAttribute="leading" secondItem="CCf-wD-uIn" secondAttribute="leading" id="jwL-Cl-Df5"/>
+                                                <constraint firstItem="Jxn-Ct-qO6" firstAttribute="leading" secondItem="CCf-wD-uIn" secondAttribute="leading" id="k8n-QO-WBE"/>
                                                 <constraint firstItem="2f0-FL-Ceu" firstAttribute="top" secondItem="Smu-SP-zDt" secondAttribute="bottom" constant="10" id="qzf-NY-k8r"/>
                                                 <constraint firstItem="iLE-V7-OhJ" firstAttribute="leading" secondItem="CCf-wD-uIn" secondAttribute="leading" id="yln-l3-GaO"/>
                                             </constraints>
@@ -128,7 +170,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="716" y="-365"/>
+            <point key="canvasLocation" x="716" y="-365.66716641679164"/>
         </scene>
         <!--Second-->
         <scene sceneID="wg7-f3-ORb">

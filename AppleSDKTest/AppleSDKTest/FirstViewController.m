@@ -91,6 +91,43 @@
         }
 
     }
+    else if(viewTag == 3) {
+
+        if (tagVal == 1) {
+
+            [self.mGCDDemo dispatch_semaphore];
+        }
+        else if(tagVal ==2){
+            [self.mGCDDemo dispatch_barrier_sync];
+        }
+        else if(tagVal ==3){
+            [self.mGCDDemo dispatch_barrier_async];
+        }
+        else if(tagVal ==4){
+            [self.mGCDDemo dispatch_queue_manager];
+        }
+        
+
+    }
+    else if(viewTag == 4) {
+
+        if (tagVal == 1) {
+
+            [self.mGCDDemo dispatch_block_sync];
+        }
+        else if(tagVal ==2){
+            [self.mGCDDemo dispatch_block_wait];
+        }
+        else if(tagVal ==3){
+            [self.mGCDDemo dispatch_block_async];
+        }
+        else if(tagVal ==4){
+            [self.mGCDDemo dispatch_block_cancel];
+        }
+        
+
+    }
+    
     
 }
 

@@ -34,7 +34,11 @@
 
 7.调度信号量
 
-8.
+8.派头壁垒.
+ 
+9.队列管理
+ 
+10.任务块管理
  */
 
 #import <Foundation/Foundation.h>
@@ -122,8 +126,24 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  7.调度信号量
  */
+-(void) dispatch_semaphore;
 
+- (void) dispatch_barrier_async;
+- (void) dispatch_barrier_sync;
 
+//9.队列管理
+- (void) dispatch_queue_manager;
+
+//10.任务块管理
+- (void) dispatch_block_manager;
+
+- (void) dispatch_block_wait;
+
+- (void) dispatch_block_sync;
+
+- (void) dispatch_block_async;
+
+- (void) dispatch_block_cancel;
 @end
 
 NS_ASSUME_NONNULL_END

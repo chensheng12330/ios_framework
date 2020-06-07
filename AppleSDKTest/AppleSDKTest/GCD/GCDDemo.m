@@ -216,8 +216,7 @@
 
 //并行异步
 /**
- 自定义并行队列,可异步创建多条线程运行,(一个任务对印一条线程)
- 全局并行队,将会创建一条线程,但会使用 main线程与当前线程来执行 任务.即两条.
+ 并行队列,可异步创建多条线程运行,(一个任务对印一条线程)
  
  */
 -(void) asyncInConcurrentQueue {
@@ -241,14 +240,12 @@
     //全局队列并行异步,查看启用的线程数
     dispatch_queue_t global_concurrent_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
     
-    dispatch_apply(10, global_concurrent_queue, ^(size_t t) {
-        [NSThread sleepForTimeInterval:2];
-        
-        DDLogInfo(@"----完成 第[%zu]个任务---当前线程%@",t, [NSThread currentThread]);
-    });
-    //dispatch_async(global_concurrent_queue, db);
+    for (int i=0; i<10; i++) {
+        dispatch_async(global_concurrent_queue, dbt);
+    }
     
     
+    return;
 }
 
 //并行同步
@@ -575,6 +572,484 @@ void testFunc(void *context) {
     DDLogInfo(@"开始派发, 异步执行三个任务");
     
     return;
+}
+
+/**
+ 信号量
+ 
+ 作用:可用于控制并行队列并发线程的数量
+
+ 
+ //总结:信号量设置的是2，在当前场景下，同一时间内执行的线程就不会超过2，先执行2个线程，等执行完一个，下一个会开始执行。
+ 
+ 步骤:
+ 1.创建
+ 2.发信号
+ 3.等待
+
+ */
+
+-(void) dispatch_semaphore {
+    
+    //信号量设置的是2
+    dispatch_semaphore_t st = dispatch_semaphore_create(2);
+    
+    dispatch_queue_t queue = dispatch_queue_create("com.sherwin.semaphore.1", DISPATCH_QUEUE_CONCURRENT);
+    
+    __block int indexNum=0;
+    dispatch_block_t bt = ^(){
+        
+        int tempNum = indexNum++;
+        //吃掉一个信号量
+        dispatch_semaphore_wait(st, DISPATCH_TIME_FOREVER); //30s超时时间
+        DDLogInfo(@"----开始执行第[%d]个任务---当前线程%@",tempNum,[NSThread currentThread]);
+        [NSThread sleepForTimeInterval:2];
+        DDLogInfo(@"----结束执行第[%d]个任务---当前线程%@",tempNum,[NSThread currentThread]);
+        
+        //释放一个信号量
+        long nSeNum = dispatch_semaphore_signal(st); //完成信号量
+        //DDLogInfo(@"当前可使用信号总数:%ld",nSeNum);
+    };
+    
+    //模似某个信号超时
+    dispatch_block_t bt_timeout = ^(){
+        
+        int tempNum = indexNum++;
+        //吃掉一个信号量
+        dispatch_semaphore_wait(st, DISPATCH_TIME_FOREVER); //30s超时时间
+        DDLogInfo(@"----开始执行第[%d]个任务---当前线程%@",tempNum,[NSThread currentThread]);
+        [NSThread sleepForTimeInterval:30];
+        DDLogInfo(@"----结束执行第[%d]个任务---当前线程%@",tempNum,[NSThread currentThread]);
+        
+        //释放一个信号量
+        long nSeNum = dispatch_semaphore_signal(st); //完成信号量
+        //DDLogInfo(@"当前可使用信号总数:%ld",nSeNum);
+    };
+    
+    
+    for (int i=0; i<10; i++) {
+
+        if (i == 6) {
+            dispatch_async(queue, bt_timeout);
+        }
+        else {
+            
+            dispatch_async(queue, bt);
+        }
+        
+    }
+    /**/
+}
+
+/**
+ 派送壁垒-栅栏-异步
+ 在并发调度队列中执行的任务的同步点.
+ 
+ 在障碍块完成之前，不会执行任何在障碍块之后提交的块。
+ */
+- (void) dispatch_barrier_async {
+    //异步
+    
+    dispatch_queue_t queue = dispatch_queue_create("com.test.testQueue", DISPATCH_QUEUE_CONCURRENT);
+    
+    __block int indexNum=0;
+    dispatch_block_t db = ^(){
+        int tempNum = indexNum++;
+       
+        [NSThread sleepForTimeInterval:2];
+        
+        DDLogInfo(@"----开始执行第[%d]个任务---当前线程%@",tempNum,[NSThread currentThread]);
+    };
+    
+    
+    dispatch_block_t db_ba = ^(){
+        int tempNum = indexNum++;
+       
+        DDLogInfo(@"---壁垒,执行10s");
+        [NSThread sleepForTimeInterval:10];
+        
+        DDLogInfo(@"---壁垒,执行10s-开始执行第[%d]个任务---当前线程%@",tempNum,[NSThread currentThread]);
+    };
+    
+    
+    for (int i=0; i<10; i++) {
+        
+        if(i==5){
+            DDLogInfo(@"主线程派发开始");
+            dispatch_barrier_async(queue, db_ba);
+            DDLogInfo(@"主线程派发结束");
+        }
+        else {
+            dispatch_async(queue, db);
+        }
+    }
+    
+    
+    return;
+}
+
+/**
+ 同步创建障碍,会阻塞当前派发的线程.直到线程执行完成,
+ 将屏障块提交给调度队列以进行同步执行。
+ 不同于，此功能直到屏障块完成后才返回。
+ 调用此函数并以当前队列为目标会导致死锁
+ */
+
+- (void) dispatch_barrier_sync {
+    //异步
+    
+    dispatch_queue_t queue = dispatch_queue_create("com.test.testQueue", DISPATCH_QUEUE_CONCURRENT);
+    
+    __block int indexNum=0;
+    dispatch_block_t db = ^(){
+        int tempNum = indexNum++;
+       
+        [NSThread sleepForTimeInterval:2];
+        
+        DDLogInfo(@"----开始执行第[%d]个任务---当前线程%@",tempNum,[NSThread currentThread]);
+    };
+    
+    
+    dispatch_block_t db_ba = ^(){
+        int tempNum = indexNum++;
+       
+        DDLogInfo(@"---壁垒,执行10s");
+        [NSThread sleepForTimeInterval:10];
+        
+        DDLogInfo(@"---壁垒,执行10s-开始执行第[%d]个任务---当前线程%@",tempNum,[NSThread currentThread]);
+    };
+    
+    
+    for (int i=0; i<10; i++) {
+        
+        if(i==5){
+            DDLogInfo(@"主线程派发开始");
+            dispatch_barrier_sync(queue, db_ba);
+            DDLogInfo(@"主线程派发结束");
+        }
+        else {
+            dispatch_async(queue, db);
+        }
+    }
+    
+    
+    return;
+}
+
+/**
+ 该函数等待直到指定的时间，然后异步添加block到指定的queue。
+ 
+ 场景：当追加大量处理到Dispatch Queue时，在追加处理的过程中，有时希望不执行已追加的处理。例如演算结果被Block截获时，一些处理会对这个演算结果造成影响。在这种情况下，只要挂起Dispatch Queue即可。当可以执行时再恢复。
+
+ 
+ 总结:dispatch_suspend，dispatch_resume提供了“挂起、恢复”队列的功能，简单来说，就是可以暂停、恢复队列上的任务。但是这里的“挂起”，
+ 
+ 并不能保证可以立即停止队列上正在运行的任务，也就是如果挂起之前已经有队列中的任务在进行中，那么该任务依然会被执行完毕, 从实用上考虑,只 针对串行队列使用 较好.
+ */
+- (void) dispatch_queue_manager {
+    
+    dispatch_queue_t queue = dispatch_queue_create("com.test.testQueue", DISPATCH_QUEUE_SERIAL);  //DISPATCH_QUEUE_CONCURRENT
+    
+     __block int indexNum=0;
+    
+    dispatch_block_t bt = ^{
+        
+        int tempNum = indexNum++;
+        // 执行第一个任务
+        [NSThread sleepForTimeInterval:2];
+        
+        DDLogInfo(@"----开始执行第[%d]个任务---当前线程%@",tempNum,[NSThread currentThread]);
+        
+    };
+    
+    for (int i=0; i<10; i++) {
+        dispatch_async(queue, bt);
+    }
+    
+    //2秒后需要挂起队列
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        //[NSThread sleepForTimeInterval:0.5];
+        
+        /**
+         通过挂起调度对象，您的应用程序可以暂时阻止执行与该对象关联的任何块。在调用时运行的所有块完成后，将发生挂起。调用此函数将增加对象的挂起计数，然后调用将其减少。当计数大于零时，对象将保持挂起状态，因此您必须使每个调用与匹配的调用保持平衡
+
+         恢复对象后，将交付提交到调度队列的任何块或调度源观察到的事件。
+         */
+        DDLogInfo(@">>>>挂起调度对象");
+        dispatch_suspend(queue);
+        
+        //解决问题,
+        [NSThread sleepForTimeInterval:6];
+        
+        /**
+         调用此函数将减少挂起的调度队列或调度事件源对象的挂起计数。当计数大于零时，对象将保持挂起状态。当挂起计数恢复为零时，将提交提交到调度队列的任何块或调度源在挂起时观察到的任何事件。
+         */
+        dispatch_resume(queue);
+        DDLogInfo(@">>>> 恢复调度对象");
+        
+    });
+    
+    
+}
+
+/**
+ 调度工作项封装了要在调度队列或调度组内执行的工作。您还可以将工作项用作调度源事件，注册或取消处理程序。
+ 
+
+ DISPATCH_BLOCK_ASSIGN_CURRENT
+ 设置工作项的属性以匹配当前执行上下文的属性。
+
+ DISPATCH_BLOCK_BARRIER
+ 使工作项在提交到并发队列时充当屏障块。
+
+ DISPATCH_BLOCK_DETACHED
+ 取消工作项的属性与当前执行上下文的关联。
+
+ DISPATCH_BLOCK_ENFORCE_QOS_CLASS
+ 首选与该块关联的服务质量类。
+
+ DISPATCH_BLOCK_INHERIT_QOS_CLASS
+ 首选与当前执行上下文关联的服务质量类。
+
+ DISPATCH_BLOCK_NO_QOS_CLASS
+ 执行工作项，而不分配服务质量等级
+ */
+
+- (void) dispatch_block_manager {
+    
+    //1. 创建工作任务.
+    dispatch_block_t dbt = dispatch_block_create(DISPATCH_BLOCK_ASSIGN_CURRENT, ^{
+        
+        DDLogInfo(@"----开始执行任务---当前线程%@",[NSThread currentThread]);
+        [NSThread sleepForTimeInterval:3];
+    });
+    
+    /*
+     
+    //从指定的块和标志创建，同步执行和释放调度块
+    dispatch_block_perform(DISPATCH_BLOCK_ASSIGN_CURRENT, dbt);
+     */
+    
+    //2.添加完成处理程序
+    
+    dispatch_queue_t queue = dispatch_queue_create("com.block.manager.01", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_block_t callBlock = ^(){
+        DDLogInfo(@"任务执行完成.---当前线程%@",[NSThread currentThread]);
+    };
+    
+    /**
+     如果观察到的块对象的执行已经完成，则此函数立即提交通知块。
+
+     使用此接口不可能通知同一块对象的多次执行。而是使用此功能。dispatch_group_notify
+
+     单个分发块可以被观察一次或多次并执行一次，也可以执行任意次。任何其他组合的行为均未定义。即使使用该功能取消意味着该块的代码从不运行，向调度队列的提交也被视为执行。dispatch_block_cancel
+
+     如果为单个块对象调度了多个通知块，则没有定义的顺序将通知块提交到它们的关联队列。
+     */
+    dispatch_block_notify(dbt, queue, callBlock);
+    
+    //3.执行
+    //延迟执行工作项, 同步等待，直到指定的调度块的执行完成或指定的超时时间结束为止。
+    //会阻塞当前线程
+    dispatch_block_wait(dbt, 5);
+    
+    //4.同步执行
+    
+    //5.异步执行
+    
+    //6.取消
+    
+}
+
+- (void) dispatch_block_wait{
+    //1. 创建工作任务.
+    dispatch_block_t dbt = dispatch_block_create(DISPATCH_BLOCK_ASSIGN_CURRENT, ^{
+        
+        DDLogInfo(@"----开始执行任务---当前线程%@",[NSThread currentThread]);
+        [NSThread sleepForTimeInterval:9];
+    });
+    
+    /*
+     
+    //从指定的块和标志创建，同步执行和释放调度块
+    dispatch_block_perform(DISPATCH_BLOCK_ASSIGN_CURRENT, dbt);
+     */
+    
+    //2.添加完成处理程序
+    
+    dispatch_queue_t queue = dispatch_queue_create("com.block.manager.01", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_block_t callBlock = ^(){
+        DDLogInfo(@"任务执行完成.---当前线程%@",[NSThread currentThread]);
+    };
+    
+    /**
+     如果观察到的块对象的执行已经完成，则此函数立即提交通知块。
+
+     使用此接口不可能通知同一块对象的多次执行。而是使用此功能。dispatch_group_notify
+
+     单个分发块可以被观察一次或多次并执行一次，也可以执行任意次。任何其他组合的行为均未定义。即使使用该功能取消意味着该块的代码从不运行，向调度队列的提交也被视为执行。dispatch_block_cancel
+
+     如果为单个块对象调度了多个通知块，则没有定义的顺序将通知块提交到它们的关联队列。
+     */
+    dispatch_block_notify(dbt, queue, callBlock);
+    
+    //3.执行
+    //延迟执行工作项, 同步等待，直到指定的调度块的执行完成或指定的超时时间结束为止。
+    //会阻塞当前线程
+    
+    dispatch_async(queue, dbt);
+    
+    dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC));
+    dispatch_block_wait(dbt, timeout);
+    //
+    DDLogInfo(@"内容执行完成");
+}
+
+- (void) dispatch_block_sync{
+    //1. 创建工作任务.
+    dispatch_block_t dbt = dispatch_block_create(DISPATCH_BLOCK_ASSIGN_CURRENT, ^{
+        
+        DDLogInfo(@"----开始执行任务---当前线程%@",[NSThread currentThread]);
+        [NSThread sleepForTimeInterval:3];
+    });
+    
+    /*
+     
+    //从指定的块和标志创建，同步执行和释放调度块
+    dispatch_block_perform(DISPATCH_BLOCK_ASSIGN_CURRENT, dbt);
+     */
+    
+    //2.添加完成处理程序
+    
+    dispatch_queue_t queue = dispatch_queue_create("com.block.manager.01", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_block_t callBlock = ^(){
+        DDLogInfo(@"任务执行完成.---当前线程%@",[NSThread currentThread]);
+    };
+    
+    /**
+     如果观察到的块对象的执行已经完成，则此函数立即提交通知块。
+
+     使用此接口不可能通知同一块对象的多次执行。而是使用此功能。dispatch_group_notify
+
+     单个分发块可以被观察一次或多次并执行一次，也可以执行任意次。任何其他组合的行为均未定义。即使使用该功能取消意味着该块的代码从不运行，向调度队列的提交也被视为执行。dispatch_block_cancel
+
+     如果为单个块对象调度了多个通知块，则没有定义的顺序将通知块提交到它们的关联队列。
+     */
+    dispatch_block_notify(dbt, queue, callBlock);
+    
+    //3.执行
+    //延迟执行工作项, 同步等待，直到指定的调度块的执行完成或指定的超时时间结束为止。
+    //会阻塞当前线程
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_sync(queue, dbt);
+        DDLogInfo(@"内容执行完成");
+    });
+    
+    return;
+}
+
+- (void) dispatch_block_async{
+    //1. 创建工作任务.
+    dispatch_block_t dbt = dispatch_block_create(DISPATCH_BLOCK_ASSIGN_CURRENT, ^{
+        
+        DDLogInfo(@"----开始执行任务---当前线程%@",[NSThread currentThread]);
+        [NSThread sleepForTimeInterval:3];
+    });
+    
+    /*
+     
+    //从指定的块和标志创建，同步执行和释放调度块
+    dispatch_block_perform(DISPATCH_BLOCK_ASSIGN_CURRENT, dbt);
+     */
+    
+    //2.添加完成处理程序
+    
+    dispatch_queue_t queue = dispatch_queue_create("com.block.manager.01", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_block_t callBlock = ^(){
+        DDLogInfo(@"任务执行完成.---当前线程%@",[NSThread currentThread]);
+    };
+    
+    /**
+     如果观察到的块对象的执行已经完成，则此函数立即提交通知块。
+
+     使用此接口不可能通知同一块对象的多次执行。而是使用此功能。dispatch_group_notify
+
+     单个分发块可以被观察一次或多次并执行一次，也可以执行任意次。任何其他组合的行为均未定义。即使使用该功能取消意味着该块的代码从不运行，向调度队列的提交也被视为执行。dispatch_block_cancel
+
+     如果为单个块对象调度了多个通知块，则没有定义的顺序将通知块提交到它们的关联队列。
+     */
+    dispatch_block_notify(dbt, queue, callBlock);
+    
+    //3.执行
+    //延迟执行工作项, 同步等待，直到指定的调度块的执行完成或指定的超时时间结束为止。
+    //会阻塞当前线程
+    //dispatch_block_wait(dbt, 5);
+    
+    dispatch_async(queue, dbt);
+    DDLogInfo(@"内容执行完成");
+}
+
+/**
+ 取消会使调度块的任何将来执行立即返回，但不影响已经在进行的块对象的任何执行。
+ 与该块对象相关联的任何资源的释放都将延迟，直到下一次尝试执行该块对象（或已在进行的任何执行完成）为止。
+ */
+- (void) dispatch_block_cancel{
+    
+    //1. 创建工作任务.
+    dispatch_block_t dbt = dispatch_block_create(DISPATCH_BLOCK_ASSIGN_CURRENT, ^{
+        
+        DDLogInfo(@"--将要 被 取消的线程--开始执行任务---当前线程%@",[NSThread currentThread]);
+        [NSThread sleepForTimeInterval:10];
+    });
+    
+    /*
+     
+    //从指定的块和标志创建，同步执行和释放调度块
+    dispatch_block_perform(DISPATCH_BLOCK_ASSIGN_CURRENT, dbt);
+     */
+    
+    //2.添加完成处理程序
+    
+    dispatch_queue_t queue = dispatch_queue_create("com.block.manager.01", DISPATCH_QUEUE_SERIAL);
+    
+    dispatch_block_t callBlock = ^(){
+        DDLogInfo(@"任务执行完成.---当前线程%@",[NSThread currentThread]);
+    };
+    
+    /**
+     如果观察到的块对象的执行已经完成，则此函数立即提交通知块。
+
+     使用此接口不可能通知同一块对象的多次执行。而是使用此功能。dispatch_group_notify
+
+     单个分发块可以被观察一次或多次并执行一次，也可以执行任意次。任何其他组合的行为均未定义。即使使用该功能取消意味着该块的代码从不运行，向调度队列的提交也被视为执行。dispatch_block_cancel
+
+     如果为单个块对象调度了多个通知块，则没有定义的顺序将通知块提交到它们的关联队列。
+     */
+    dispatch_block_notify(dbt, queue, callBlock);
+    
+    //3.执行
+    for (int i=0; i<5; i++) {
+        dispatch_async(queue, ^(){
+            DDLogInfo(@"----开始执行任务---当前线程%@",[NSThread currentThread]);
+            [NSThread sleepForTimeInterval:3];
+        });
+    }
+    
+    dispatch_async(queue, dbt);
+    
+    //模似取消
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [NSThread sleepForTimeInterval:3];
+        
+        dispatch_block_cancel(dbt);
+        DDLogInfo(@"----取消任务 %@ ---当前线程%@",dbt, [NSThread currentThread]);
+    });
 }
 
 @end
