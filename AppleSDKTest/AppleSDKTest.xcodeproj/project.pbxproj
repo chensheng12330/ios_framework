@@ -459,8 +459,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = J9L66M2KMX;
+				DEVELOPMENT_TEAM = H9Z4MVAQY2;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/AppleSDKTest/PrefixHeader.pch";
 				INFOPLIST_FILE = AppleSDKTest/Info.plist;
@@ -471,6 +472,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.mmt.AppleSDKTest;
 				PRODUCT_NAME = AppleSDKDemo;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -480,7 +482,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = J9L66M2KMX;
+				DEVELOPMENT_TEAM = H9Z4MVAQY2;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/AppleSDKTest/PrefixHeader.pch";
 				INFOPLIST_FILE = AppleSDKTest/Info.plist;

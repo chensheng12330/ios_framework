@@ -84,7 +84,10 @@
             [self.mGCDDemo dispatch_apply];
         }
         else if(tagVal ==4){
-            [self.mGCDDemo dispatchFunInQueue];
+            [self.mGCDDemo dispatch_group_serialQueue];
+        }
+        else if(tagVal ==5){
+            [self.mGCDDemo dispatch_group_enterAndLeave];
         }
 
     }
@@ -111,7 +114,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
 
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"basicCell"];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"basicCell_f"];
 
     return cell;
 }

@@ -72,6 +72,7 @@
             DDLogInfo(@">>>并行同步-线程%@",[NSThread currentThread]);
         });
     });
+    
     return;
 }
 
@@ -214,20 +215,40 @@
 
 
 //并行异步
+/**
+ 自定义并行队列,可异步创建多条线程运行,(一个任务对印一条线程)
+ 全局并行队,将会创建一条线程,但会使用 main线程与当前线程来执行 任务.即两条.
+ 
+ */
 -(void) asyncInConcurrentQueue {
     //并发队列
+    
     dispatch_queue_t concurrentQueue = dispatch_queue_create("com.sherwin.concurrentQueue.101", DISPATCH_QUEUE_CONCURRENT);
     dispatch_block_t dbt = ^{
         //睡眠三秒
-        [NSThread sleepForTimeInterval:3];
-        DDLogInfo(@">>>串行队列异步执行-线程%@",[NSThread currentThread]);
+        [NSThread sleepForTimeInterval:2];
+        DDLogInfo(@">>>并行队列异步执行-线程%@",[NSThread currentThread]);
     };
 
     for (int i=0; i<10; i++) {
 
         dispatch_async(concurrentQueue, dbt);
     }
+    
+    /**/
 
+    ///
+    //全局队列并行异步,查看启用的线程数
+    dispatch_queue_t global_concurrent_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
+    
+    dispatch_apply(10, global_concurrent_queue, ^(size_t t) {
+        [NSThread sleepForTimeInterval:2];
+        
+        DDLogInfo(@"----完成 第[%zu]个任务---当前线程%@",t, [NSThread currentThread]);
+    });
+    //dispatch_async(global_concurrent_queue, db);
+    
+    
 }
 
 //并行同步
@@ -427,38 +448,133 @@ void testFunc(void *context) {
 
 #pragma mark - SH 派遣组
 
+/** 设计思路
+ 
+ 1.任务一个一个顺序执行,后面任务依赖前面任务,  D->C  C->B
+ 2.多个任务执行完成,才执行某个任务,   ABC ->D
+ 
+ >>此功能执行流程
+ 1.创建调度组
+ 2.向小组中添加工作
+ 3.添加完成处理任务
+ 4.等待任务完成执行
+ 5.手动管理小组任务完成状态.
+ 
+ */
+
 //串行列表?
 - (void) dispatch_group_serialQueue {
 
     //1.创建队列组,  在当前主线程中创建
     dispatch_group_t group = dispatch_group_create();
 
-    //2.创建任务的队列- 串行队列.
-    dispatch_queue_t queue =  dispatch_queue_create("com.sherwin.queue12", DISPATCH_QUEUE_SERIAL);
+    //2.创建任务的队列- 串行队列. 让任务一个一个执行.
+    //dispatch_queue_t queue =  dispatch_queue_create("com.sherwin.queue12", DISPATCH_QUEUE_SERIAL);
+    
+    //并行队列,创建多个线程
+    dispatch_queue_t queue =  dispatch_queue_create("com.sherwin.queue12", DISPATCH_QUEUE_CONCURRENT);
+    
 
     //3. 任务块
 
-    __block int indexNum = 0;
+    __block int indexNum = 1;
     dispatch_block_t dbt = ^{
 
         [NSThread sleepForTimeInterval:2];
         DDLogInfo(@"----执行第[%d]个任务---当前线程%@",indexNum++, [NSThread currentThread]);
     };
 
-
-    //4.设置任务组完成通知
-    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
-
-        DDLogInfo(@"--⭕️⭕️--执行最后的汇总任务---当前线程%@",[NSThread currentThread]);
-    });
-
     //5.开始派发, 异步执行三个任务
     dispatch_group_async(group, queue, dbt);
     dispatch_group_async(group, queue, dbt);
     dispatch_group_async(group, queue, dbt);
 
+    
+    //4.设置任务组完成通知
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+
+        DDLogInfo(@"--⭕️⭕️--执行最后的汇总任务---当前线程%@",[NSThread currentThread]);
+    });
+    
+    //若想执行完上面的任务再走下面这行代码可以加上下面这句代码
+    //等待上面的任务全部完成后，往下继续执行（会阻塞当前线程）
+    //同步阻塞当前线程.
+    //dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    
     //.
+
+    DDLogInfo(@"开始派发, 异步执行三个任务");
+    return;
 }
 
+
+/**
+ 手动管理小组任务完成状态.
+ */
+- (void) dispatch_group_enterAndLeave {
+
+    //1.创建队列组,  在当前主线程中创建
+    dispatch_group_t group = dispatch_group_create();
+
+    //2.创建任务的队列- 串行队列. 让任务一个一个执行.
+    //dispatch_queue_t queue =  dispatch_queue_create("com.sherwin.queue12", DISPATCH_QUEUE_SERIAL);
+    
+    //并行队列,创建多个线程
+    dispatch_queue_t queue =  dispatch_queue_create("com.sherwin.queue12", DISPATCH_QUEUE_CONCURRENT);
+    
+
+    //3. 任务块
+
+    __block int indexNum = 0;
+    dispatch_block_t dbt = ^{
+
+        [NSThread sleepForTimeInterval:1];
+        int curIndex = ++indexNum;
+        DDLogInfo(@"----执行第[%d]个任务---当前线程%@",indexNum, [NSThread currentThread]);
+        ;
+        
+        dispatch_group_enter(group);
+        //假设切换到网络线程中执行网络请求
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            
+            
+            [NSThread sleepForTimeInterval:2];
+            
+            DDLogInfo(@"----完成 第[%d]个任务---当前线程%@",curIndex, [NSThread currentThread]);
+            
+            //有结果返回
+            dispatch_group_leave(group);
+            
+        });
+        //
+        
+    };
+
+    
+    //开启个新队列进行派发
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        //4.开始派发, 异步执行三个任务
+        dispatch_group_async(group, queue, dbt);
+        dispatch_group_async(group, queue, dbt);
+        dispatch_group_async(group, queue, dbt);
+
+        
+        //5.设置任务组完成通知
+        dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+
+            DDLogInfo(@"--⭕️⭕️--执行最后的汇总任务---当前线程%@",[NSThread currentThread]);
+        });
+        
+        //.等待 所有完成
+        dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+        
+        DDLogInfo(@"等待队列内任务完成---当前线程%@",[NSThread currentThread]);
+        
+    });
+    
+    DDLogInfo(@"开始派发, 异步执行三个任务");
+    
+    return;
+}
 
 @end

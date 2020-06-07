@@ -115,9 +115,9 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  您可以聚合一组任务并同步组上的行为。您将多个块附加到一个组，并计划它们在同一队列或不同队列上异步执行。当所有块完成执行后，组将执行其完成处理程序。您也可以同步等待组中的所有块完成执行。
  */
--(void) dispatch_group;
+-(void) dispatch_group_serialQueue;
 
-
+- (void) dispatch_group_enterAndLeave;
 
 /**
  7.调度信号量
