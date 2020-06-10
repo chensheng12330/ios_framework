@@ -32,3 +32,17 @@ Convenient for future development.***
 2. 事件监控
 3. 文件传输
 4. 用户数据传输
+
+
+> ## GCD Dispatch
+派发队列,基于多核CPU的多线程管理技术.
+
+
+
+> ## Processes and Threads
+线程管理技术.
+
+NSThreads
+GCD
+NSOperater
+
