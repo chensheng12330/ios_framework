@@ -11,7 +11,7 @@ put_prompt "\r\n-------------------------
 --->请输入提交的内容日志:\r\n"
 read Arg
 
-put_prompt "\r\n --->正在提交，请稍等...\r\n"
+put_prompt "\r\n--->正在提交，请稍等...\r\n"
 git add *
 git commit -m "${Arg}"
 git push -u origin master
