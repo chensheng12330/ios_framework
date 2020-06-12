@@ -1,0 +1,16 @@
+#输出提示信息(字符串)
+function put_prompt() {
+  echo "\033[1;32m$1 \033[0m"
+}
+
+CURPATH=$(cd "$(dirname "$0")"; pwd)
+put_prompt "当前路径：${CURPATH}"
+cd ${CURPATH}
+
+put_prompt "执行下拉操作...\r\n"
+git pull origin master
+
+git status
+git log
+
+put_prompt "\r\n完成操作"

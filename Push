@@ -1,0 +1,21 @@
+#输出提示信息(字符串)
+function put_prompt() {
+  echo "\033[1;32m$1 \033[0m"
+}
+
+CURPATH=$(cd "$(dirname "$0")"; pwd)
+put_prompt "--->当前路径：${CURPATH}"
+cd ${CURPATH}
+
+put_prompt "\r\n-------------------------
+--->请输入提交的内容日志:\r\n"
+read Arg
+
+put_prompt "\r\n --->正在提交，请稍等...\r\n"
+git add *
+git commit -m "${Arg}"
+git push -u origin master
+git status
+git log
+
+put_prompt "\r\n--->完成操作"
