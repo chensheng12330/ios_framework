@@ -5,7 +5,7 @@ function put_prompt() {
 
 CURPATH=$(cd "$(dirname "$0")"; pwd)
 put_prompt "--->当前路径：${CURPATH}"
-cd ${CURPATH}
+cd "${CURPATH}"
 
 put_prompt "\r\n-------------------------
 --->请输入提交的内容日志:\r\n"
